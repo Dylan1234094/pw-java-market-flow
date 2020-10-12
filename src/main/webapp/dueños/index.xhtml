@@ -1,0 +1,107 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Lista de Dueños</title>
+</h:head>
+
+<h:body>
+
+	<h1>Dueños</h1>
+
+	<h:form id="form-dueño">
+		<p:growl id="growl" life="2000" />
+		<p:panelGrid columns="4" id="panel-dueño"
+			style="#{dueñoView.stylePanelDueño}">
+			<p:outputLabel for="input-nombre" value="Nombre(s): " />
+			<p:inputText id="input-nombre" value="#{dueñoView.dueño.nombre}" />
+
+			<p:outputLabel for="input-DNI" value="DNI: " />
+			<p:inputText id="input-DNI"
+				value="#{dueñoView.dueño.numeroDocumento}" />
+
+			<p:outputLabel for="input-fechaNacimiento"
+				value="Fecha de nacimiento :" />
+			<p:datePicker id="input-fechaNacimiento"
+				value="#{dueñoView.dueño.fechaNacimiento}" />
+		</p:panelGrid>
+
+		<p:panelGrid id="panel-search" columns="4"
+			style="#{dueñoView.styleTableDueño}">
+			<p:outputLabel for="input-search-nombre" value="Nombre: " />
+			<p:inputText id="input-search-nombre"
+				value="#{dueñoView.dueñoSearch.nombre}" />
+			<p:commandButton value="Buscar" icon="pi pi-search"
+				actionListener="#{dueñoView.findByNombre()}"
+				update="form-dueño:table-dueño :form-dueño:toolbar-dueño" />
+			<p:commandButton value="Limpiar" icon="pi pi-undo"
+				actionListener="#{dueñoView.cleanbyNombre()}" update="@form" />
+
+		</p:panelGrid>
+
+		<p:dataTable id="table-dueño" value="#{dueñoView.dueños}" var="dueño"
+			paginator="true" rows="3" paginatorPosition="bottom"
+			selectionMode="single" rowKey="#{dueño.id}"
+			style="#{dueñoView.styleTableDueño}" emptyMessage="No hay dueños">
+
+			<p:ajax event="rowSelect" listener="#{dueñoView.selectDueño}"
+				update="@form" />
+			<p:ajax event="rowUnselect" listener="#{dueñoView.unselectDueño}"
+				update="@form" />
+
+
+			<p:column headerText="Id">
+				<h:outputText value="#{dueño.id}" />
+			</p:column>
+			<p:column headerText="Nombre(s)">
+				<h:outputText value="#{dueño.nombre}" />
+			</p:column>
+			<p:column headerText="DNI">
+				<h:outputText value="#{dueño.numeroDocumento}" />
+			</p:column>
+			<p:column headerText="Fecha de nacimiento">
+				<h:outputText value="#{dueño.fechaNacimiento}" />
+			</p:column>
+		</p:dataTable>
+
+		<p:toolbar id="toolbar-dueño">
+			<f:facet name="left">
+				<p:commandButton value="Nuevo" icon="pi pi-file"
+					disabled="#{dueñoView.disabledButtonNuevo}"
+					actionListener="#{dueñoView.newDueño()}" update="@form" />
+
+				<p:commandButton value="Guardar" icon="pi pi-save"
+					disabled="#{dueñoView.disabledButtonGuardar}"
+					actionListener="#{dueñoView.saveDueño()}" update="@form" />
+
+				<p:commandButton value="Cancelar" icon="pi pi-times"
+					disabled="#{dueñoView.disabledButtonCancelar}"
+					actionListener="#{dueñoView.cancelDueño()}" update="@form" />
+
+				<p:commandButton value="Editar" icon="pi pi-pencil"
+					disabled="#{dueñoView.disabledButtonEditar	}"
+					actionListener="#{dueñoView.editDueño()}" update="@form" />
+
+				<p:commandButton value="Eliminar" icon="pi pi-trash"
+					disabled="#{dueñoView.disabledButtonEliminar}"
+					actionListener="#{dueñoView.deleteDueño()}"
+					update=":form-dueño:table-dueño :form-dueño:toolbar-dueño">
+					<p:confirm header="Confirmación"
+						message="Estas seguro que deseas elimininar a: #{dueñoView.messageConfirmDialog}?"
+						icon="pi pi-exclamation-triangle" />
+				</p:commandButton>
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Sí" type="button"
+						styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+				</p:confirmDialog>
+			</f:facet>
+		</p:toolbar>
+	</h:form>
+
+</h:body>
+</html>
